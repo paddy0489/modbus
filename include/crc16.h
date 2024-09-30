@@ -54,6 +54,7 @@ obtain a copy.
 
 #ifndef _UTIL_CRC16_H_
 #define _UTIL_CRC16_H_
+#if CS_PLATFORM == CS_P_CC3200 || CS_PLATFORM == CS_P_CC3220 || CS_PLATFORM == CS_P_ESP8266 || CS_PLATFORM == CS_P_STM32 || defined(MGOS_ESP32) || defined(MGOS_ESP32C3) || defined(RS14100)
 #include <stdint.h>
 
 /** @ingroup util_crc16
@@ -84,5 +85,5 @@ static uint16_t crc16_update(uint16_t crc, uint8_t a)
   return crc;
 }
 
-
+#endif /* CS_PLATFORM == CS_P_CC3200 || CS_PLATFORM == CS_P_CC3220 || CS_PLATFORM == CS_P_ESP8266 || CS_PLATFORM == CS_P_STM32 || defined(MGOS_ESP32) || defined(MGOS_ESP32C3) || defined(RS14100) */
 #endif /* _UTIL_CRC16_H_ */

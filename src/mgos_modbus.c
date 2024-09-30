@@ -19,6 +19,8 @@
 #include "crc16.h"
 #include "mgos_rpc.h"
 
+#if CS_PLATFORM == CS_P_CC3200 || CS_PLATFORM == CS_P_CC3220 || CS_PLATFORM == CS_P_ESP8266 || CS_PLATFORM == CS_P_STM32 || defined(MGOS_ESP32) || defined(MGOS_ESP32C3) || defined(RS14100)
+
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
 #define lowByte(w) ((uint8_t)((w)&0xff))
 #define highByte(w) ((uint8_t)((w) >> 8))
@@ -831,3 +833,5 @@ bool mgos_modbus_init(void) {
 
     return true;
 }
+
+#endif  // MGOS_HAVE_MODBUS
