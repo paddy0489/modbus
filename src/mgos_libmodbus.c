@@ -95,7 +95,7 @@ bool mb_read_coils(uint8_t slave_id, uint16_t read_address, uint16_t read_qty, m
     struct mb_request_info info;
     struct mbuf response;
     response.size = read_qty * sizeof(uint16_t);
-    response.buf = malloc(response.len);
+    response.buf = malloc(response.size);
     int status = 0;
     int success = true;
     int ret = modbus_set_slave(ctx, slave_id);
@@ -104,7 +104,7 @@ bool mb_read_coils(uint8_t slave_id, uint16_t read_address, uint16_t read_qty, m
         status = EINVAL;
     } else {
         if ((status = modbus_read_bits(ctx, (int)read_address, (int)read_qty, (uint8_t *)response.buf)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_read_coils"));
             success = false;
             response.len = 0;
         } else {
@@ -116,7 +116,7 @@ bool mb_read_coils(uint8_t slave_id, uint16_t read_address, uint16_t read_qty, m
     info.read_address = read_address;
     info.read_qty = read_qty;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     free(response.buf);
     return false;
 }
@@ -129,7 +129,7 @@ bool mb_read_discrete_inputs(uint8_t slave_id, uint16_t read_address, uint16_t r
     struct mb_request_info info;
     struct mbuf response;
     response.size = read_qty * sizeof(uint16_t);
-    response.buf = malloc(response.len);
+    response.buf = malloc(response.size);
     int status = 0;
     int success = true;
     int ret = modbus_set_slave(ctx, slave_id);
@@ -138,7 +138,7 @@ bool mb_read_discrete_inputs(uint8_t slave_id, uint16_t read_address, uint16_t r
         status = EINVAL;
     } else {
         if ((status = modbus_read_input_bits(ctx, (int)read_address, (int)read_qty, (uint8_t *)response.buf)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_read_discrete_inputs"));
             success = false;
             response.len = 0;
         } else {
@@ -149,8 +149,7 @@ bool mb_read_discrete_inputs(uint8_t slave_id, uint16_t read_address, uint16_t r
     info.slave_id = slave_id;
     info.read_address = read_address;
     info.read_qty = read_qty;
-    
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     free(response.buf);
     return false;
 }
@@ -163,7 +162,7 @@ bool mb_read_holding_registers(uint8_t slave_id, uint16_t read_address, uint16_t
     struct mb_request_info info;
     struct mbuf response;
     response.size = read_qty * sizeof(uint16_t);
-    response.buf = malloc(response.len);
+    response.buf = malloc(response.size);
     int status = 0;
     int success = true;
     int ret = modbus_set_slave(ctx, slave_id);
@@ -172,7 +171,7 @@ bool mb_read_holding_registers(uint8_t slave_id, uint16_t read_address, uint16_t
         status = EINVAL;
     } else {
         if ((status = modbus_read_registers(ctx, (int)read_address, (int)read_qty, (uint16_t *)response.buf)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_read_holding_registers"));
             success = false;
             response.len = 0;
         } else {
@@ -184,7 +183,7 @@ bool mb_read_holding_registers(uint8_t slave_id, uint16_t read_address, uint16_t
     info.read_address = read_address;
     info.read_qty = read_qty;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     free(response.buf);
     return false;
 }
@@ -197,7 +196,7 @@ bool mb_read_input_registers(uint8_t slave_id, uint16_t read_address, uint16_t r
     struct mb_request_info info;
     struct mbuf response;
     response.size = read_qty * sizeof(uint16_t);
-    response.buf = malloc(response.len);
+    response.buf = malloc(response.size);
     int status = 0;
     int success = true;
     int ret = modbus_set_slave(ctx, slave_id);
@@ -206,7 +205,7 @@ bool mb_read_input_registers(uint8_t slave_id, uint16_t read_address, uint16_t r
         status = EINVAL;
     } else {
         if ((status = modbus_read_input_registers(ctx, (int)read_address, (int)read_qty, (uint16_t *)response.buf)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_read_input_registers"));
             success = false;
             response.len = 0;
         } else {
@@ -218,7 +217,7 @@ bool mb_read_input_registers(uint8_t slave_id, uint16_t read_address, uint16_t r
     info.read_address = read_address;
     info.read_qty = read_qty;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     free(response.buf);
     return false;
 }
@@ -239,7 +238,7 @@ bool mb_write_single_coil(uint8_t slave_id, uint16_t write_address, uint16_t wri
         status = EINVAL;
     } else {
         if ((status = modbus_write_register(ctx, (int)write_address, write_value)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_write_single_coil %d", write_address));
             success = false;
             response.len = 0;
         } else {
@@ -251,7 +250,7 @@ bool mb_write_single_coil(uint8_t slave_id, uint16_t write_address, uint16_t wri
     info.write_address = write_address;
     info.write_qty = 1;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     return false;
 }
 
@@ -281,7 +280,7 @@ bool mb_write_multiple_coils(uint8_t slave_id, uint16_t write_address, uint16_t 
         status = EINVAL;
     } else {
         if ((status = modbus_write_bits(ctx, (int)write_address, len, data)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_write_multiple_coils"));
             success = false;
             response.len = 0;
         } else {
@@ -293,7 +292,7 @@ bool mb_write_multiple_coils(uint8_t slave_id, uint16_t write_address, uint16_t 
     info.write_address = write_address;
     info.write_qty = 1;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     return false;
 }
 
@@ -315,7 +314,7 @@ bool mb_write_multiple_registers(uint8_t slave_id, uint16_t write_address, uint1
         status = EINVAL;
     } else {
         if ((status = modbus_write_bits(ctx, (int)write_address, len, data)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_write_multiple_registers"));
             success = false;
             response.len = 0;
         } else {
@@ -327,7 +326,7 @@ bool mb_write_multiple_registers(uint8_t slave_id, uint16_t write_address, uint1
     info.write_address = write_address;
     info.write_qty = 1;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     return false;
 }
 
@@ -341,7 +340,7 @@ bool mb_read_write_multiple_registers(uint8_t slave_id, uint16_t read_address, u
     struct mb_request_info info;
     struct mbuf response;
     response.size = len;
-    response.buf = malloc(response.len);
+    response.buf = malloc(response.size);
     int status = 0;
     int success = true;
     int ret = modbus_set_slave(ctx, slave_id);
@@ -350,13 +349,13 @@ bool mb_read_write_multiple_registers(uint8_t slave_id, uint16_t read_address, u
         status = EINVAL;
     } else {
         if ((status = modbus_write_bits(ctx, (int)write_address, write_qty, data)) < 0) {
-            LOG(LL_ERROR, ("MODBUS UART error"));
+            LOG(LL_ERROR, ("MODBUS UART error mb_read_write_multiple_registers"));
             success = false;
             response.len = 0;
         } else {
             response.len = (size_t) status;
             if ((status = modbus_read_input_bits(ctx, (int)read_address, (int)read_qty, (uint8_t *)response.buf)) < 0) {
-                LOG(LL_ERROR, ("MODBUS UART error"));
+                LOG(LL_ERROR, ("MODBUS UART error mb_read_write_multiple_registers"));
                 success = false;
                 response.len = 0;
             } else {
@@ -369,7 +368,7 @@ bool mb_read_write_multiple_registers(uint8_t slave_id, uint16_t read_address, u
     info.read_address = read_address;
     info.read_qty = read_qty;
     
-    cb((uint8_t)status, info, response, cb_arg);
+    if (cb != NULL) cb((uint8_t)status, info, response, cb_arg);
     free(response.buf);
     return false;
 }
@@ -402,7 +401,7 @@ bool mgos_modbus_create(const struct mgos_config_modbus* cfg) {
     } else if (cfg->parity == 2) {
         parity_str = 'O';
     }
-
+    
     ctx = modbus_new_rtu(cfg->device, cfg->baudrate, parity_str, cfg->data_bits, cfg->stop_bits);
     if (ctx == NULL) {
         LOG(LL_ERROR,("Unable to create the libmodbus context"));
@@ -703,7 +702,13 @@ bool mgos_modbus_init(void) {
     mg_rpc_add_handler(mgos_rpc_get_global(), "Modbus.Read",
                        "{func: %d, id:%d, start:%d, qty:%d, filename:%Q, json_map:%Q}",
                        rpc_modbus_read_handler, NULL);
-
     return true;
+}
+
+bool mgos_modbus_connect() {
+    if (!mgos_sys_config_get_modbus_enable()) {
+        return false;
+    }
+    return mgos_modbus_init();
 }
 #endif
