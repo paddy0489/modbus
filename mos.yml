@@ -27,7 +27,7 @@ conds:
     apply:
       config_schema:
         - ["modbus.slave_id", "i", 1, {title: "Slave ID"}]
-        - ["modbus.device", "s", "/dev/ttyUSB1", {title: "Device name"}]
+        - ["modbus.uart", "s", "/dev/ttyUSB0", {title: "Device name"}]
         - ["modbus.data_bits", "i", 1, {title: "1: 1 Bit, 2: 2 Bit, 3: 1.5 Bit, default: 1"}]
 
 

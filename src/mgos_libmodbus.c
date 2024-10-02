@@ -402,7 +402,7 @@ bool mgos_modbus_create(const struct mgos_config_modbus* cfg) {
         parity_str = 'O';
     }
     
-    ctx = modbus_new_rtu(cfg->device, cfg->baudrate, parity_str, cfg->data_bits, cfg->stop_bits);
+    ctx = modbus_new_rtu(cfg->uart, cfg->baudrate, parity_str, cfg->data_bits, cfg->stop_bits);
     if (ctx == NULL) {
         LOG(LL_ERROR,("Unable to create the libmodbus context"));
         return false;
@@ -412,18 +412,18 @@ bool mgos_modbus_create(const struct mgos_config_modbus* cfg) {
 
     int ret = modbus_set_slave(ctx, cfg->slave_id);
     if(ret < 0){
-        LOG(LL_ERROR, ("MODBUS UART%s set slave error",cfg->device));
+        LOG(LL_ERROR, ("MODBUS UART%s set slave error",cfg->uart));
         return false;
     }
 
     ret = modbus_connect(ctx);
     if(ret < 0){
-        LOG(LL_ERROR, ("MODBUS UART%s connect error",cfg->device));
+        LOG(LL_ERROR, ("MODBUS UART%s connect error",cfg->uart));
         return false;
     }
 
     LOG(LL_DEBUG, ("MODBUS UART%s Baudrate %d, Parity '%c', Stop bits %d",
-                   cfg->device, cfg->baudrate,
+                   cfg->uart, cfg->baudrate,
                    parity_str, cfg->stop_bits));
 
     return true;
